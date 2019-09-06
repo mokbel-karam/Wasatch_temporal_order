@@ -28,15 +28,17 @@ parser.add_argument('-vars', default='asdfadfa',
 args = parser.parse_args()
 
 
-dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='ups')
+dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='py')
 dirStruct.prepare_directories()
 
 
 def Command(folder):
-    return "$PWD/{}/run.sh".format(folder)
+    return [folder,"./run.sh"]
 
 def worker(command):
-    sp.call([command],shell=True)
+    os.system('cd $PWD/{}'.format(command[0]))
+    os.system(command[1]+' &')
+    os.system('cd ..')
     return
 
 jobs = []
