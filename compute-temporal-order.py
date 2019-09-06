@@ -45,7 +45,7 @@ if args.levels is None:
 
 # if the number of levels is <2, then reset it to 3
 if (args.levels < 2):
-    print('The number of levels has to be >= 3. Setting levels to 3')
+    print 'The number of levels has to be >= 3. Setting levels to 3'
     args.levels = 3
 
 rootups = args.ups
@@ -78,7 +78,7 @@ if args.dt is not None:
 
 args.suspath = os.path.normpath(args.suspath)
 args.suspath = os.path.abspath(args.suspath)
-print(args.suspath)
+print args.suspath
 os.system('ln -fs ' + args.suspath + '/sus sus')
 os.system('ln -fs ' + args.suspath + '/tools/extractors/lineextract lineextract')
 
@@ -99,7 +99,7 @@ for node in xmldoc.getElementsByTagName('resolution'):
 
 
 for fname in fnames:
-    print('now updating xml for ', fname)
+    print 'now updating xml for ', fname
     basename = os.path.splitext(fname)[0]
     xmldoc = minidom.parse(fname)
 
@@ -177,7 +177,7 @@ for fname in fnames:
     for var in myvars:
         outFile = str(var) + '-t' + str(counter) + '.txt'
         the_command = './lineextract -pr 32 -v ' + str(var) + ' -timestep ' + str(maxSteps*refinement) + ' -istart 0 0 0 -iend ' + str(Nx-1)+' '+str(Ny-1)+' '+str(Nz-1)+ ' -o ' + outFile +' -uda '+udaName
-        print('Executing command: ', the_command)
+        print 'Executing command: ', the_command
         os.system(the_command)
 
     os.system('rm ' + fname)
@@ -186,7 +186,7 @@ for fname in fnames:
 
 #now load the data and compute the errors
 varDict ={}
-print('---------------- TEMPORAL ORDER -------------------')
+print '---------------- TEMPORAL ORDER -------------------'
 for var in myvars:
     phiAll = []
     for i in range(0,nLevels):
@@ -195,23 +195,23 @@ for var in myvars:
         phiAll.append(phi[:,3])
         os.system('rm ' + datname)
 
-    print('-----------------------------')
-    print(' VARIABLE: ', var)
-    print('-----------------------------')
+    print '-----------------------------'
+    print ' VARIABLE: ', var
+    print '-----------------------------'
 
     # local errors
     errAll = []
     for i in range(0,nLevels-1):
         diff = phiAll[i+1] - phiAll[i]
         err = np.linalg.norm(diff,2)
-        print('error', err)
+        print 'error', err
         errAll.append(err)
 
     # now compute order
     order=[]
     for i in range(0,nLevels-2):
         order.append(np.log( errAll[i+1]/errAll[i] ) / np.log(0.5))
-        print('order: ',order[-1])
+        print 'order: ',order[-1]
 
     varDict[var]={'timesteps':timesteps, 'error':errAll,'order':order}
 
