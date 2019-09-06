@@ -28,7 +28,7 @@ parser.add_argument('-vars', default='asdfadfa',
 args = parser.parse_args()
 
 
-dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='py')
+dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='ups')
 dirStruct.prepare_directories()
 
 
