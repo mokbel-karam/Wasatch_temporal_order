@@ -68,26 +68,3 @@ class DirStruct:
             return False
 
         return True
-        # file.write(command(filesDict[folder],levels,nsteps,vars,suthPath))
-# cwd = os.system('pwd')
-#
-# filenames=['taylor-green-vortex-2d-xy-proj-all.ups','taylor-green-vortex-2d-xy-proj-2-3.ups','taylor-green-vortex-2d-xy-proj-1-3.ups','taylor-green-vortex-2d-xy-proj-3.ups']
-#
-# cwd_process = run(['pwd'], stdout=PIPE, stderr=PIPE, universal_newlines=True)
-# cwd = cwd_process.stdout
-#
-# for name in filenames:
-#     sp.run(['mkdir',name.split('.')[0])
-#
-# def command (fileName,levels=6,nsteps=10,vars='x-mom,y-mom'):
-#     return  "python2.7 compute-temporal-order.py -ups {} -levels {} -nsteps {} -vars {} -suspath $PWD/../../opt/StandAlone/".format(fileName, levels, nsteps, vars)
-#
-# def worker(Command):
-#     sp.call([Command], shell=True)
-#     return
-#
-# jobs = []
-# for num, name in enumerate(filenames):
-#     p = multiprocessing.Process(target=worker, args=(command(name),))
-#     jobs.append(p)
-#     p.start()
