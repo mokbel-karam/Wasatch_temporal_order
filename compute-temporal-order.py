@@ -8,6 +8,7 @@ Last updated on Dec 29, 2014
 import numpy as np
 import argparse
 import os
+import json
 from xml.dom import minidom
 from shutil import copyfile
 
@@ -44,7 +45,7 @@ if args.levels is None:
 
 # if the number of levels is <2, then reset it to 3
 if (args.levels < 2):
-    print 'The number of levels has to be >= 3. Setting levels to 3'
+    print('The number of levels has to be >= 3. Setting levels to 3')
     args.levels = 3
 
 rootups = args.ups
@@ -64,6 +65,8 @@ for i in range(0,nLevels):
 refinement = 1
 maxSteps = 10
 
+timesteps=[]
+
 if args.nsteps is not None:
     maxSteps = args.nsteps
 
@@ -75,7 +78,7 @@ if args.dt is not None:
 
 args.suspath = os.path.normpath(args.suspath)
 args.suspath = os.path.abspath(args.suspath)
-print args.suspath
+print(args.suspath)
 os.system('ln -fs ' + args.suspath + '/sus sus')
 os.system('ln -fs ' + args.suspath + '/tools/extractors/lineextract lineextract')
 
@@ -96,7 +99,7 @@ for node in xmldoc.getElementsByTagName('resolution'):
 
 
 for fname in fnames:
-    print 'now updating xml for ', fname
+    print('now updating xml for ', fname)
     basename = os.path.splitext(fname)[0]
     xmldoc = minidom.parse(fname)
 
@@ -110,6 +113,7 @@ for fname in fnames:
             dtmin = float(node.firstChild.data)
         dtmin = dtmin/refinement
         node.firstChild.replaceWholeText(dtmin)
+        timesteps.append(dtmin)
 
     for node in xmldoc.getElementsByTagName('delt_max'):
         #dtmax = float(node.firstChild.data)
@@ -146,22 +150,22 @@ for fname in fnames:
             outInter.appendChild(text)
             node.appendChild(outInter)
 
-    hasInitTimestep = False
-    for node in xmldoc.getElementsByTagName('outputInitTimestep'):
-        hasInitTimestep = True
+hasInitTimestep = False
+for node in xmldoc.getElementsByTagName('outputInitTimestep'):
+    hasInitTimestep = True
 
-    if (not hasInitTimestep):
-        for node in xmldoc.getElementsByTagName('DataArchiver'):
-            outInter = xmldoc.createElement('outputInitTimestep')
-            node.appendChild(outInter)
+if (not hasInitTimestep):
+    for node in xmldoc.getElementsByTagName('DataArchiver'):
+        outInter = xmldoc.createElement('outputInitTimestep')
+        node.appendChild(outInter)
 
-    for node in xmldoc.getElementsByTagName('maxTime'):
-        node.firstChild.replaceWholeText('100')
+for node in xmldoc.getElementsByTagName('maxTime'):
+    node.firstChild.replaceWholeText('100')
 
-    refinement *= 2
-    f = open(fname, 'w')
-    xmldoc.writexml(f)
-    f.close()
+refinement *= 2
+f = open(fname, 'w')
+xmldoc.writexml(f)
+f.close()
 
 # now run the files
 counter = 0
@@ -173,7 +177,7 @@ for fname in fnames:
     for var in myvars:
         outFile = str(var) + '-t' + str(counter) + '.txt'
         the_command = './lineextract -pr 32 -v ' + str(var) + ' -timestep ' + str(maxSteps*refinement) + ' -istart 0 0 0 -iend ' + str(Nx-1)+' '+str(Ny-1)+' '+str(Nz-1)+ ' -o ' + outFile +' -uda '+udaName
-        print 'Executing command: ', the_command
+        print('Executing command: ', the_command)
         os.system(the_command)
 
     os.system('rm ' + fname)
@@ -181,7 +185,8 @@ for fname in fnames:
     counter += 1
 
 #now load the data and compute the errors
-print '---------------- TEMPORAL ORDER -------------------'
+varDict ={}
+print('---------------- TEMPORAL ORDER -------------------')
 for var in myvars:
     phiAll = []
     for i in range(0,nLevels):
@@ -190,22 +195,28 @@ for var in myvars:
         phiAll.append(phi[:,3])
         os.system('rm ' + datname)
 
-    print '-----------------------------'
-    print ' VARIABLE: ', var
-    print '-----------------------------'
+    print('-----------------------------')
+    print(' VARIABLE: ', var)
+    print('-----------------------------')
 
     # local errors
     errAll = []
     for i in range(0,nLevels-1):
         diff = phiAll[i+1] - phiAll[i]
         err = np.linalg.norm(diff,2)
-        print 'error', err
+        print('error', err)
         errAll.append(err)
 
     # now compute order
+    order=[]
     for i in range(0,nLevels-2):
-        print 'order:', np.log( errAll[i+1]/errAll[i] ) / np.log(0.5)
+        order.append(np.log( errAll[i+1]/errAll[i] ) / np.log(0.5))
+        print('order: ',order[-1])
 
+    varDict[var]={'timesteps':timesteps, 'error':errAll,'order':order}
+
+with open("{}/temporal_order_{}.txt".format(os.path.splitext(rootups)[0],os.path.splitext(rootups)[0]),"wb") as file:
+    json.dump(varDict,file,indent=4)
 os.system('rm -rf *.uda*')
 os.system('rm -rf *.dot')
 os.system('rm log.txt')
