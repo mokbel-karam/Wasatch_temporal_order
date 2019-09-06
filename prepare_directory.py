@@ -32,7 +32,7 @@ class DirStruct:
         return cwdProcess.stdout
 
     def command (self,fileName):
-        return  "python3 compute-temporal-order.py -ups {} -levels {} -nsteps {} -vars {} -suspath {}".format(fileName, self.levels, self.nsteps, self.vars, self.suthPath)
+        return  "python2.7 compute-temporal-order.py -ups {} -levels {} -nsteps {} -vars {} -suspath {}".format(fileName, self.levels, self.nsteps, self.vars, self.suthPath)
 
     def __generates_names(self):
         try:
