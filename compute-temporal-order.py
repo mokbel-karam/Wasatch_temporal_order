@@ -215,7 +215,7 @@ for var in myvars:
 
     varDict[var]={'timesteps':timesteps, 'error':errAll,'order':order}
 
-with open("{}/temporal_order_{}.txt".format(os.path.splitext(rootups)[0],os.path.splitext(rootups)[0]),"wb") as file:
+with open("./temporal_order_{}.txt".format(os.path.splitext(rootups)[0]),"wb") as file:
     json.dump(varDict,file,indent=4)
 os.system('rm -rf *.uda*')
 os.system('rm -rf *.dot')
