@@ -32,19 +32,11 @@ dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='
 dirStruct.prepare_directories()
 
 
-def Command(folder):
-    return [folder,"./run.sh"]
-
-def worker(command):
-    os.system('cd $PWD/{}'.format(command[0]))
-    os.system(command[1]+' &')
-    os.system('cd ..')
+def worker(folder):
+    os.system('cd taylor-green-vortex-2d-xy ; setsid ./run.sh  2>&1 log.out ; cd ..')
     return
 
 jobs = []
 
 for num, folder in enumerate(dirStruct.filesDict.keys()):
-
-    process = multiprocessing.Process(target=worker,args=(Command(folder),))
-    jobs.append(process)
-    process.start()
+    worker(folder)
