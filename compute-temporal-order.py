@@ -150,22 +150,22 @@ for fname in fnames:
             outInter.appendChild(text)
             node.appendChild(outInter)
 
-hasInitTimestep = False
-for node in xmldoc.getElementsByTagName('outputInitTimestep'):
-    hasInitTimestep = True
+    hasInitTimestep = False
+    for node in xmldoc.getElementsByTagName('outputInitTimestep'):
+        hasInitTimestep = True
 
-if (not hasInitTimestep):
-    for node in xmldoc.getElementsByTagName('DataArchiver'):
-        outInter = xmldoc.createElement('outputInitTimestep')
-        node.appendChild(outInter)
+    if (not hasInitTimestep):
+        for node in xmldoc.getElementsByTagName('DataArchiver'):
+            outInter = xmldoc.createElement('outputInitTimestep')
+            node.appendChild(outInter)
 
-for node in xmldoc.getElementsByTagName('maxTime'):
-    node.firstChild.replaceWholeText('100')
+    for node in xmldoc.getElementsByTagName('maxTime'):
+        node.firstChild.replaceWholeText('100')
 
-refinement *= 2
-f = open(fname, 'w')
-xmldoc.writexml(f)
-f.close()
+    refinement *= 2
+    f = open(fname, 'w')
+    xmldoc.writexml(f)
+    f.close()
 
 # now run the files
 counter = 0
@@ -215,8 +215,9 @@ for var in myvars:
 
     varDict[var]={'timesteps':timesteps, 'error':errAll,'order':order}
 
-with open("{}/temporal_order_{}.txt".format(os.path.splitext(rootups)[0],os.path.splitext(rootups)[0]),"wb") as file:
+with open("./temporal_order_{}.txt".format(os.path.splitext(rootups)[0]),"wb") as file:
     json.dump(varDict,file,indent=4)
+
 os.system('rm -rf *.uda*')
 os.system('rm -rf *.dot')
 os.system('rm log.txt')
