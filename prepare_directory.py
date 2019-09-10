@@ -32,7 +32,7 @@ class DirStruct:
         return cwdProcess.stdout
 
     def command (self,fileName):
-        return  "python2.7 compute-temporal-order.py -ups {} -levels {} -nsteps {} -vars {} -suspath {}".format(fileName, self.levels, self.nsteps, self.vars, self.suthPath)
+        return  "python2.7 compute-temporal-order.py -ups {} -levels {} -nsteps {} -vars {} -suspath {}".format(fileName, self.levels, self.nsteps, self.vars, '../'+self.suthPath)
 
     def __generates_names(self):
         try:
@@ -60,7 +60,7 @@ class DirStruct:
 
             for folder in self.filesDict.keys():
                 # os.system('rm $PWD/{}/run.sh'.format(folder))
-                os.system("echo '#!/usr/bin/bash' > $PWD/{}/run.sh".format(folder))
+                os.system("echo '#!/usr/bin/env bash' > $PWD/{}/run.sh".format(folder))
                 os.system("echo {} >> $PWD/{}/run.sh".format(self.command(self.filesDict[folder]),folder))
                 os.system("chmod +x $PWD/{}/run.sh".format(folder))
         except:
