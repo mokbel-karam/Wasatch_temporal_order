@@ -39,6 +39,6 @@ def worker(folder):
 jobs = []
 
 for num, folder in enumerate(dirStruct.filesDict.keys()):
-    p = multiprocessing.Process(worker, args=(folder,))
+    p = multiprocessing.Process(worker, args=(folder,),group=None)
     jobs.append(p)
     p.start()
