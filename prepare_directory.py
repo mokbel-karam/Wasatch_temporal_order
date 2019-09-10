@@ -60,9 +60,9 @@ class DirStruct:
 
             for folder in self.filesDict.keys():
                 # os.system('rm $PWD/{}/run.sh'.format(folder))
-                os.system('echo #!/usr/bin/env bash > $PWD/{}/run.sh'.format(folder))
-                os.system('echo {} >> $PWD/{}/run.sh'.format(self.command(self.filesDict[folder]),folder))
-                os.system('chmod +x $PWD/{}/run.sh'.format(folder))
+                os.system("echo '#!/usr/bin/bash' > $PWD/{}/run.sh".format(folder))
+                os.system("echo {} >> $PWD/{}/run.sh".format(self.command(self.filesDict[folder]),folder))
+                os.system("chmod +x $PWD/{}/run.sh".format(folder))
         except:
             print("An error occured while generatiing directories and prepating the scripts to run")
             return False
