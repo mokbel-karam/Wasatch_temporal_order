@@ -59,7 +59,7 @@ class DirStruct:
                 os.system('cp $PWD/{} $PWD/{}'.format(self.filesDict[folder],folder))
 
             for folder in self.filesDict.keys():
-                os.system('rm $PWD/{}/run.sh'.format(folder))
+                # os.system('rm $PWD/{}/run.sh'.format(folder))
                 os.system('echo #!/usr/bin/env bash > $PWD/{}/run.sh'.format(folder))
                 os.system('echo {} >> $PWD/{}/run.sh'.format(self.command(self.filesDict[folder]),folder))
                 os.system('chmod +x $PWD/{}/run.sh'.format(folder))
