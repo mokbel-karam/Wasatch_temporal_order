@@ -22,13 +22,13 @@ parser.add_argument('-nsteps',
 parser.add_argument('-suspath',
                     help='The path to sus.',default='.') #required=True
 
-parser.add_argument('-vars', default='asdfadfa',
+parser.add_argument('-vars', default='x-mom',
                     help='Comma seperated list of variables for which the temporal order is to be computed. example: -vars "var1, my var".')
 
 args = parser.parse_args()
 
 
-dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='py')
+dirStruct = DirStruct(args.levels,args.vars,args.suspath,args.nsteps,extension='ups')
 dirStruct.prepare_directories()
 
 
