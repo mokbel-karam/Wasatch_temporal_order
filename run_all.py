@@ -33,7 +33,7 @@ dirStruct.prepare_directories()
 
 
 def worker(folder):
-    os.system('cd taylor-green-vortex-2d-xy ; setsid ./run.sh  2>&1 log.out ; cd ..')
+    os.system('cd {} ; setsid ./run.sh  2>&1 log.out ; cd ..'.format(folder))
     return
 
 jobs = []
