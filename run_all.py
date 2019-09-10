@@ -20,7 +20,7 @@ parser.add_argument('-nsteps',
                     help='The number of timesteps. Defaults to 10.', type=int, default=10)
 
 parser.add_argument('-suspath',
-                    help='The path to sus.',default='.') #required=True
+                    help='The relative path to sus.',default='.') #required=True
 
 parser.add_argument('-vars', default='x-mom',
                     help='Comma seperated list of variables for which the temporal order is to be computed. example: -vars "var1, my var".')
