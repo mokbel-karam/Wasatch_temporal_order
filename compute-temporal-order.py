@@ -186,6 +186,7 @@ for fname in fnames:
 
 #now load the data and compute the errors
 varDict ={}
+varDict['timpesteps'] = timesteps
 print '---------------- TEMPORAL ORDER -------------------'
 for var in myvars:
     phiAll = []
@@ -213,7 +214,7 @@ for var in myvars:
         order.append(np.log( errAll[i+1]/errAll[i] ) / np.log(0.5))
         print 'order: ',order[-1]
 
-    varDict[var]={'timesteps':timesteps, 'error':errAll,'order':order}
+    varDict[var]={'error':errAll,'order':order}
 
 with open("./temporal_order_{}.txt".format(os.path.splitext(rootups)[0]),"wb") as file:
     json.dump(varDict,file,indent=4)
