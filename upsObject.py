@@ -8,9 +8,11 @@ class UPSObject:
         with open(jsonFile) as file:
             data = json.load(file)
             for var in data.keys():
-                self.timesteps = data[var]['timesteps']
-                varName = self.__2str(var,'-')
-                setattr(self, varName+"_error", data[var]['error'])
+                if var == "timesteps":
+                    setattr(self,var,data[var])
+                else:
+                    varName = self.__2str(var,'-')
+                    setattr(self, varName+"_error", data[var]['error'])
 
     def __2str(self,str,delimiter):
         splitStr = str.split(delimiter)
