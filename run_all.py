@@ -48,6 +48,9 @@ for num, folder in enumerate(dirStruct.filesDict.keys()):
     jobs.append(p)
     p.start()
 
+for job in jobs:
+    job.join()
+
 filenames = [folder+".txt" for folder in dirStruct.filesDict.keys()]
 pickle.dump(UPSGroup(filenames),'./{}.obj'.format(args.title))
 
