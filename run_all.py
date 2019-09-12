@@ -3,6 +3,8 @@
 import argparse
 import multiprocessing
 from prepare_directory import *
+from upsObject import *
+import pickle
 import subprocess as sp
 
 
@@ -20,10 +22,13 @@ parser.add_argument('-nsteps',
                     help='The number of timesteps. Defaults to 10.', type=int, default=10)
 
 parser.add_argument('-suspath',
-                    help='The relative path to sus.',default='.') #required=True
+                    help='The relative path to sus.',default='.')
 
 parser.add_argument('-vars', default='x-mom',
                     help='Comma seperated list of variables for which the temporal order is to be computed. example: -vars "var1, my var".')
+
+parser.add_argument('-title', required=True,
+                    help='title of the output object file')
 
 args = parser.parse_args()
 
@@ -42,3 +47,14 @@ for num, folder in enumerate(dirStruct.filesDict.keys()):
     p = multiprocessing.Process(target=worker, args=(folder,))
     jobs.append(p)
     p.start()
+
+for job in jobs:
+    job.join()
+
+filenames = [folder+".txt" for folder in dirStruct.filesDict.keys()]
+with open('./{}.obj'.format(args.title),'wb') as file:
+    pickle.dump(UPSGroup(filenames),file)
+
+sep = ' '
+command = sep.join(filenames)
+os.system("rm {}".format(command))
