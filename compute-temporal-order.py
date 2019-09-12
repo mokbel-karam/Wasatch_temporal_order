@@ -186,7 +186,7 @@ for fname in fnames:
 
 #now load the data and compute the errors
 varDict ={}
-varDict['timpesteps'] = timesteps
+varDict['timesteps'] = timesteps
 print '---------------- TEMPORAL ORDER -------------------'
 for var in myvars:
     phiAll = []
