@@ -216,9 +216,11 @@ for var in myvars:
 
     varDict[var]={'error':errAll,'order':order}
 
-with open("./temporal_order_{}.txt".format(os.path.splitext(rootups)[0]),"wb") as file:
+name = "./{}.txt".format(os.path.splitext(rootups)[0])
+with open(name,"wb") as file:
     json.dump(varDict,file,indent=4)
 
+os.system("cp {} ../".format(name))
 os.system('rm -rf *.uda*')
 os.system('rm -rf *.dot')
 os.system('rm log.txt')
