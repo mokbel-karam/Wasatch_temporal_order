@@ -52,7 +52,8 @@ for job in jobs:
     job.join()
 
 filenames = [folder+".txt" for folder in dirStruct.filesDict.keys()]
-pickle.dump(UPSGroup(filenames),'./{}.obj'.format(args.title))
+with open('./{}.obj'.format(args.title),'wb') as file:
+    pickle.dump(UPSGroup(filenames),file)
 
 sep = ' '
 command = sep.join(filenames)
