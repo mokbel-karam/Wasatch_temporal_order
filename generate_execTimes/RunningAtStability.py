@@ -42,8 +42,10 @@ class UPSLuncher:
         self.suspath = os.path.normpath(self.suspath)
         self.suspath = os.path.abspath(self.suspath)
         print (self.suspath)
-        os.system('ln -fs ' + self.suspath + '/sus sus')
-        os.system('ln -fs ' + self.suspath + '/tools/extractors/lineextract lineextract')
+
+    def __create_sus_link(self,folder):
+        os.system('ln -fs ' + self.suspath + '/sus '+folder+'/sus')
+        os.system('ln -fs ' + self.suspath + '/tools/extractors/lineextract '+ folder+'/lineextract')
 
 
 # find total number of procs and resolution
@@ -64,17 +66,32 @@ class UPSLuncher:
             self.Ny=int(P[1])
             self.Nz=int(P[2].split(']')[0])
 
-    def __create_new_files(self,CFL,Re):
-        fname = os.path.splitext(self.upsFile)[0] + '-CFL' + str(CFL) +'-Re' + str(Re) + '-tend'+str(self.tend)+ '.ups'
-        copyfile(self.upsFile, fname)
+    def __create_fname(self,CFL,Re):
+        fname = os.path.splitext(self.upsFile)[0] + '-CFL' + str(CFL) +'-Re' + str(Re) + '-tend'+str(self.tend)
         return fname
+    def __create_logfile_name(self,fname):
+        return fname +'.log'
+
+    def __create_uda_name(self,fname):
+        return fname +'.uda'
+    def __create_newfile_name(self,fname):
+         return './' +fname +'/'+ fname +'.ups'
+
+    def __create_new_files(self,fname):
+        newfile = self.__create_newfile_name(fname)
+        copyfile(self.upsFile, newfile)
+        return newfile
+
+    def __creat_file_to_run(self,fname):
+        return fname +'.ups'
 
 
 
     def __update_xml(self,fname,dt,mu):
-        print ('now updating xml for ', fname)
-        basename = os.path.splitext(fname)[0]
-        xmldoc = minidom.parse(fname)
+        file = self.__create_newfile_name(fname)
+        print ('now updating xml for ', file)
+        basename = fname
+        xmldoc = minidom.parse(file)
         for node in xmldoc.getElementsByTagName('TimeIntegrator'):
             node.firstChild.replaceWholeText(self.timeInteg)
 
@@ -95,27 +112,31 @@ class UPSLuncher:
             val = node.getElementsByTagName('Constant')[0]
             val.firstChild.replaceWholeText(mu)
 
-        f = open(fname, 'w')
+        f = open(file, 'w')
         xmldoc.writexml(f)
         f.close()
 
 
     def __run_fname(self,fname):
-        udaName = os.path.splitext(fname)[0] + '.uda'
-        outputName = os.path.splitext(fname)[0] + '.log'
+        file = self.__creat_file_to_run(fname)
+        udaName = self.__create_uda_name(fname)
+        outputName =  self.__create_logfile_name(fname)
         os.environ["SCI_DEBUG"]="ExecOut:+"
-        os_return = os.system('./sus' + ' ' + fname + ' > '+outputName)
-        os.system('rm ' + fname)
-        os.system('rm -f -r *uda* *dot')
+        os_return = os.system('cd '+ fname +';'+'./sus' + ' ' + file + ' > '+outputName)
+        # os.system('rm ' + newfile)
+        os.system('cd '+fname+';'+'rm -f -r *uda* *dot')
+        os.system('cd ..')
         return True
 
     def __single_run(self, CFL, Re,U=2):
         dx = 1.0/self.Nx
         mu = str(U*dx/Re)
         dt = str(CFL*dx/U)
-        fname = self.__create_new_files(CFL,Re)
+        fname = self.__create_fname(CFL,Re)
+        os.system('mkdir '+fname)
+        self.__create_sus_link(fname)
+        newfile = self.__create_new_files(fname)
         self.__update_xml(fname,dt,mu)
-
         run = self.__run_fname(fname)
 
     def run(self,CFL,Re,U=2):

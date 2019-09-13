@@ -48,7 +48,7 @@
  [],
  False,
  False,
- 1568405219,
+ 1568413149,
  [('run',
    '/Users/mkaram/python_venvs/regular_python/lib/python3.6/site-packages/PyInstaller/bootloader/Darwin-64bit/run',
    'EXECUTABLE')])
