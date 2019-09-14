@@ -47,9 +47,9 @@ class Parser:
 
     def __parse_timestep(self,currentLine, startStep,endStep):
         if self.__exists('Timestep',currentLine):
-            firstSplit= currentLine.split("       ")
-            time = self.__search_for_word('EMA',firstSplit[-1].split(' '))
-            timeVAl = float(time.split('=')[1])
+            firstSplit= currentLine.strip().split(' ')
+            time = [i for i in firstSplit if i]
+            timeVAl = float(time[6].split('=')[1])
             if (self.timesteps>startStep) and (endStep==None or self.timesteps<=endStep):
                 self.WallTimePerStep.append(timeVAl)
                 self.__stgCounter.reinitialize()
@@ -93,6 +93,45 @@ class Parser:
         return np.average(np.array(self.WallTimePSolveTimestep)/np.array(self.WallTimePerStep))
 
 
+class SummaryParser:
+    def __init__(self,stdoutfile):
+        self.stdoutfile=stdoutfile
+        self.taskCount = 0
+        self.data={}
+    def parse(self):
+        caseData={}
+        with open(self.stdoutfile) as fp:
+            line = fp.readline()
+            count = 1
+            while line:
+                currentLine = line.strip()
+
+                self.__parse_total(currentLine)
+                self.__parse_task(currentLine,caseData)
+
+                line = fp.readline()
+                count+=1
+        return caseData
+    def __parse_task(self,currentLine,dict):
+        if self.__exists('Task',currentLine):
+            if (self.taskCount!=0):
+                firstSplit= currentLine.split("|")
+                taskName = firstSplit[0].strip()
+                print(firstSplit)
+                averageTime = float(firstSplit[1].strip())
+                maxTime = float(firstSplit[2].strip())
+                dict[taskName]=(averageTime,maxTime)
+
+            self.taskCount+=1
+
+    def __parse_total(self,currentLine):
+        if self.__exists('Total',currentLine):
+            firstSplit=currentLine.split("=")
+            val = float(firstSplit[1].strip())
+            self.totalTime=val
+
+    def __exists(self,word,string):
+        return True if string.find(word) >=0 else False
 # #Exmaple:
 # #=========
 # fileName='log.out'
