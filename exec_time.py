@@ -69,7 +69,11 @@ class Parser:
                     if (timesteps>startStep) and (endStep==None or timesteps<=endStep):
                         firstSplit= currentLine.split(" ")
                         psolveTime = float(firstSplit[8])
-                        iteration = float(firstSplit[15])
+                        print(firstSplit)
+                        try:
+                            iteration = float(firstSplit[17])
+                        except:
+                            iteration = float(firstSplit[14])
                         iterationsTimestep.append(iteration)
                         stgCounter.increment()
                         WallTimePSolve.append(psolveTime)
