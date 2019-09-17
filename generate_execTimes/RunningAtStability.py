@@ -15,9 +15,9 @@ class Stability:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
-                self.__CFL.append(row[1])
-                self.__Reh.append(row[0])
-                self.__error.append(row[2])
+                self.__CFL.append(float(row[1]))
+                self.__Reh.append(float(row[0]))
+                self.__error.append(float(row[2]))
                 line_count += 1
 
     def get_Reh(self):
