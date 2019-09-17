@@ -1,7 +1,5 @@
-import numpy as np
 import json
 import os
-import pandas as pd
 
 
 class StageCounter:
@@ -104,9 +102,6 @@ class Parser:
     def total_num_iterations(self):
         return self.totalIterations
 
-    def portion_of_psolve_per_timestep(self):
-        return np.average(np.array(self.WallTimePSolveTimestep)/np.array(self.WallTimePerStep))
-
 
 class SummaryParser:
     def __init__(self,stdoutfile):
@@ -172,8 +167,26 @@ for path in files:
     Res.append(float(path.split('-')[2][2:]))
     myparser.parse(path)
 
-dict= {'totalTime':myparser.totalTime,'totalPsolveTime':myparser.totalPsolveTime,'totalPsolve':myparser.totalPsolve,'Res':Res}
-dict = pd.DataFrame(dict).sort_values('Res').to_dict('lists')
+timeDict={}
+psolvetimeDict={}
+totalpsolveDict={}
+for Re,totaltime,totalpsolvetime,totalpsolve in zip(Res,myparser.totalTime,myparser.totalPsolveTime,myparser.totalPsolve):
+    timeDict[Re] = totaltime
+    psolvetimeDict[Re]=totalpsolvetime
+    totalpsolveDict[Re] =totalpsolve
 
-with open('./execTimesRK2Proj1.json','w') as file:
-    json.dump(dict,file,indent=4)
+sortedtimeDict={}
+sortedpsolvetimeDict={}
+sortedtotalpsolveDict={}
+for Re in sorted(Res):
+    sortedtimeDict[Re]=timeDict[Re]
+    sortedpsolvetimeDict[Re]=psolvetimeDict[Re]
+    sortedtotalpsolveDict[Re]=totalpsolveDict[Re]
+
+sortedDict = {'totalTime':list(sortedtimeDict.values()),'totalPsolveTime':list(sortedpsolvetimeDict.values()),'totalPsolve':list(sortedtotalpsolveDict.values()),'Res':sorted(Res)}
+print(sortedDict)
+
+# dict= {'totalTime':myparser.totalTime,'totalPsolveTime':myparser.totalPsolveTime,'totalPsolve':myparser.totalPsolve,'Res':Res}
+
+with open('./execTimesRK3proj_new.json','w') as file:
+    json.dump(sortedDict,file,indent=4)
