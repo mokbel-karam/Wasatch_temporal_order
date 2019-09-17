@@ -2,18 +2,23 @@
 import os
 from xml.dom import minidom
 from shutil import copyfile
-import numpy as np
+import csv
 
 class Stability:
 
     def __init__(self,path):
         self.path = path
-
-        with open(path) as file:
-            data = np.genfromtxt(file,delimiter=',')
-            self.__Reh = list(data[:, 0])
-            self.__CFL = list(data[:, 1])
-            self.__error=list(data[:, 2])
+        self.__Reh = []
+        self.__CFL = []
+        self.__error = []
+        with open(path) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                self.__CFL.append(row[1])
+                self.__Reh.append(row[0])
+                self.__error.append(row[2])
+                line_count += 1
 
     def get_Reh(self):
         return self.__Reh
@@ -146,3 +151,10 @@ class UPSLuncher:
 
         else:
             self.__single_run(CFL,Re,U)
+
+
+# Example:
+#==========
+# results = Stability('./RK2_stability_proj_1.txt')
+#
+# print(results.get_error())
