@@ -195,6 +195,7 @@ sortedDict = {'totalTime':list(sortedtimeDict.values()),'totalPsolveTime':list(s
 print(sortedDict)
 
 # dict= {'totalTime':myparser.totalTime,'totalPsolveTime':myparser.totalPsolveTime,'totalPsolve':myparser.totalPsolve,'Res':Res}
+cwdName = os.getcwd().split('/')[-1]
 
-with open('./execTimesRK3proj_new.json','w') as file:
+with open('./{}.json'.format(cwdName),'w') as file:
     json.dump(sortedDict,file,indent=4)
