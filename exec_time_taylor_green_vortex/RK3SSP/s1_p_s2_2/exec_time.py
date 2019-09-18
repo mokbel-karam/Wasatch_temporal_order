@@ -174,20 +174,24 @@ for path in files:
 timeDict={}
 psolvetimeDict={}
 totalpsolveDict={}
-for Re,totaltime,totalpsolvetime,totalpsolve in zip(Res,myparser.totalTime,myparser.totalPsolveTime,myparser.totalPsolve):
+totaliterationsDict={}
+for Re,totaltime,totalpsolvetime,totalpsolve, totaliterations in zip(Res,myparser.totalTime,myparser.totalPsolveTime,myparser.totalPsolve, myparser.totalIterations):
     timeDict[Re] = totaltime
     psolvetimeDict[Re]=totalpsolvetime
     totalpsolveDict[Re] =totalpsolve
+    totaliterationsDict[Re]=totaliterations
 
 sortedtimeDict={}
 sortedpsolvetimeDict={}
 sortedtotalpsolveDict={}
+sortedtotaliterationsDict={}
 for Re in sorted(Res):
     sortedtimeDict[Re]=timeDict[Re]
     sortedpsolvetimeDict[Re]=psolvetimeDict[Re]
     sortedtotalpsolveDict[Re]=totalpsolveDict[Re]
+    sortedtotaliterationsDict[Re]=totaliterationsDict[Re]
 
-sortedDict = {'totalTime':list(sortedtimeDict.values()),'totalPsolveTime':list(sortedpsolvetimeDict.values()),'totalPsolve':list(sortedtotalpsolveDict.values()),'Res':sorted(Res)}
+sortedDict = {'totalTime':list(sortedtimeDict.values()),'totalPsolveTime':list(sortedpsolvetimeDict.values()),'totalPsolve':list(sortedtotalpsolveDict.values()),'totalIterations':list(sortedtotaliterationsDict.values()),'Res':sorted(Res)}
 print(sortedDict)
 
 # dict= {'totalTime':myparser.totalTime,'totalPsolveTime':myparser.totalPsolveTime,'totalPsolve':myparser.totalPsolve,'Res':Res}
