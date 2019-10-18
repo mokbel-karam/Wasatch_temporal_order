@@ -185,17 +185,25 @@ class plotter:
 #============
 # Initialize the plotter
 #------------------------
-myp = plotter(timestep='h',legend=False,lineWidth=2)
+myp = plotter(timestep='h',legend=False,lineWidth=1.5)
 
 # Plot 1
 #--------
-myp.plot('./lid-driven-cavity/RK2SSP.obj','x_mom_error',['1','0','p'],refOrder1=True,refOrder2=True,offset=np.log(2))
+cases= ['1','0','p']
+separator = '-'
+myp.plot('./lid-driven-cavity/RK2SSP.obj','x_mom_error',cases,refOrder1=True,refOrder2=True,offset=np.log(2))
 plt.tight_layout()
+plt.savefig('./temporal_order_plots/RK2SSP/s1_{}.pdf'.format(separator.join(cases)))
 plt.show()
 
 # Plot 2
 #--------
-myp.plot('./lid-driven-cavity/RK3SSP.obj','x_mom_error',[('2','2'),('0','0'),('1','1'),('p','p')],refOrder1=True,
+cases= [('2','2'),('0','0'),('1','1'),('p','p')]
+separator='-'
+s1_suffix = [''.join(case[0]) for case in cases]
+s2_suffix = [''.join(case[1]) for case in cases]
+myp.plot('./lid-driven-cavity/RK3SSP.obj','x_mom_error',cases,refOrder1=True,
 refOrder2=True, refOrder3=True,offset=np.log(2))
 plt.tight_layout()
+plt.savefig('./temporal_order_plots/RK3SSP/s1_{}_s2_{}.pdf'.format(separator.join(s1_suffix),separator.join(s2_suffix)))
 plt.show()
