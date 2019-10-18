@@ -47,6 +47,22 @@ class plotter:
         else:
             return r'Stage (I)  ${}$'.format(orders[0])
 
+    def __lineStyles(self,case,differentiate):
+        if differentiate:
+            caseSplit=case.split('_')
+            if len(caseSplit) >2:
+                if caseSplit[1]==caseSplit[3] and caseSplit[1]=='p':
+                    return '-.'
+                else:
+                    return self.lineStyleData
+            else:
+                if caseSplit[1]=='p':
+                    return '-.'
+                else:
+                    return self.lineStyleData
+        else:
+            return self.lineStyleData
+
     def __create_key(self, input):
         if len(input) == 2:
             return "s1_{}_s2_{}".format(input[0], input[1])
@@ -56,7 +72,7 @@ class plotter:
             raise Exception("out of bound !!!")
 
     def plot(self, path, var, cases=None, refOrder1=False, refOrder2=False, refOrder3=False, textPos=None,
-             label_func=None):
+             label_func=None, offset=None, differentiateStyle=False):
         '''
         :param path: path to ups object created after running the script
         :param var: variable name you want to plot ex: x_mom_error
@@ -75,6 +91,8 @@ class plotter:
                                  'alpha3':0.6e2
                                  }
         :param label_func: function, pass a function to change the labeling template
+        :param offset: log value to avoid overlaping of cases where we project on all stages and other cases
+        :param differentiateStyle: boolian to differentiate the style of  the line where we project on all stages and other lines
         :return:
         '''
         if label_func == None:
@@ -95,7 +113,15 @@ class plotter:
         dts = None
         for num, case in enumerate(keys):
             data = varObj[case]
-            ax.loglog(data[0][:-1], data[1], marker=next(self.markers), linestyle=self.lineStyleData,
+            if offset == None:
+                offval = np.ones_like(data[1])
+            else:
+                if case == 's1_p' or case == 's1_p_s2_p':
+                    offval = np.ones_like(data[1])*offset
+                else:
+                    offval=np.ones_like(data[1])
+
+            ax.loglog(data[0][:-1], data[1]*offval, marker=next(self.markers), linestyle=self.__lineStyles(case,differentiateStyle),
                       label=label_func(case), markersize=self.markerSize)
             if num == 0:
                 dts = np.array(data[0][2:-2])
@@ -133,9 +159,9 @@ class plotter:
 
         if refOrder3:
             if textPos == None:
-                l3 = np.array((5e-4, 2.8 * 1e-9))
-                angle3 = 1e-3
-                ax.loglog(dts, 0.6e2 * dts ** 3, '-k', linestyle='dashed', alpha=0.75)
+                l3 = np.array((5e-4, 2.8 * 1e-10))
+                angle3 = 1e-4
+                ax.loglog(dts, 0.2e2 * dts ** 3, '-k', linestyle='dashed', alpha=0.75)
             else:
                 l3 = np.array(textPos['l3'])
                 angle3 = textPos['angle3']
@@ -155,21 +181,21 @@ class plotter:
             ax.grid(which='both', alpha=self.alpha)
         return ax
 
-# # example :
-# #============
-# # Initialize the plotter
-# #------------------------
-# myp = plotter(timestep='\Delta t',legend=False)
-#
-# # Plot 1
-# #--------
-# myp.plot('./lid-driven-cavity/RK2SSP.obj','x_mom_error',['1','0','p'])
-# plt.tight_layout()
-# plt.show()
-#
-# # Plot 2
-# #--------
-# myp.plot('./lid-driven-cavity/RK3SSP.obj','x_mom_error',[('2','2'),('0','0'),('1','1')],refOrder1=True,
-# refOrder2=True, refOrder3=True)
-# plt.tight_layout()
-# plt.show()
+# example :
+#============
+# Initialize the plotter
+#------------------------
+myp = plotter(timestep='h',legend=False,lineWidth=2)
+
+# Plot 1
+#--------
+myp.plot('./lid-driven-cavity/RK2SSP.obj','x_mom_error',['1','0','p'],refOrder1=True,refOrder2=True,offset=np.log(2))
+plt.tight_layout()
+plt.show()
+
+# Plot 2
+#--------
+myp.plot('./lid-driven-cavity/RK3SSP.obj','x_mom_error',[('2','2'),('0','0'),('1','1'),('p','p')],refOrder1=True,
+refOrder2=True, refOrder3=True,offset=np.log(2))
+plt.tight_layout()
+plt.show()
